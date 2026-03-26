@@ -6,9 +6,11 @@ interface Props {
   posts: Post[];
   totalCount: number;
   onDelete: (id: string) => void;
+  onTagClick?: (tag: string) => void;
+  activeTag?: string | null;
 }
 
-export default function PostList({ posts, totalCount, onDelete }: Props) {
+export default function PostList({ posts, totalCount, onDelete, onTagClick, activeTag }: Props) {
   if (totalCount === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-full gap-3 text-mt-text-dim">
@@ -34,7 +36,7 @@ export default function PostList({ posts, totalCount, onDelete }: Props) {
   return (
     <div className="posts-scroll flex flex-col gap-2 overflow-y-auto h-full pr-0.5">
       {posts.map((post) => (
-        <PostCard key={post.id} post={post} onDelete={onDelete} />
+        <PostCard key={post.id} post={post} onDelete={onDelete} onTagClick={onTagClick} activeTag={activeTag} />
       ))}
     </div>
   );

@@ -8,10 +8,12 @@ import { ExternalLink, X } from "lucide-react";
 interface Props {
   post: Post;
   onDelete: (id: string) => void;
+  onTagClick?: (tag: string) => void;
+  activeTag?: string | null;
   className?: string;
 }
 
-export default function PostCard({ post, onDelete, className = "" }: Props) {
+export default function PostCard({ post, onDelete, onTagClick, activeTag, className = "" }: Props) {
   const displayTags = (post.aiTags && post.aiTags.length > 0) ? post.aiTags : post.tags;
 
   return (
@@ -76,14 +78,22 @@ export default function PostCard({ post, onDelete, className = "" }: Props) {
       {/* Tags */}
       {displayTags.length > 0 && (
         <div className="flex gap-1.5 mt-auto pt-2 overflow-x-auto tags-scroll whitespace-nowrap">
-          {displayTags.map((tag) => (
-            <span
-              key={tag}
-              className="text-[10px] bg-mt-accent-subtle text-mt-accent border border-mt-accent/20 px-2 py-0.5 rounded-full font-medium shadow-sm transition-colors hover:bg-mt-accent/20 shrink-0"
-            >
-              {tag}
-            </span>
-          ))}
+          {displayTags.map((tag) => {
+            const isActive = activeTag === tag;
+            return (
+              <button
+                key={tag}
+                onClick={() => onTagClick?.(tag)}
+                className={`text-[10px] px-2 py-0.5 rounded-full font-medium shadow-sm transition-colors shrink-0
+                  ${isActive 
+                    ? "bg-mt-accent text-black border border-mt-accent" 
+                    : "bg-mt-accent-subtle text-mt-accent border border-mt-accent/20 hover:bg-mt-accent/20"
+                  }`}
+              >
+                {tag}
+              </button>
+            );
+          })}
         </div>
       )}
 

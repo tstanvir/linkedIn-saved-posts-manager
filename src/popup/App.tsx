@@ -112,7 +112,7 @@ export default function App() {
       )}
 
       <div className="flex-1 overflow-hidden px-3 pt-2 pb-1">
-        <PostList posts={filtered} totalCount={posts.length} onDelete={deletePost} />
+        <PostList posts={filtered} totalCount={posts.length} onDelete={deletePost} onTagClick={setActiveTag} activeTag={activeTag} />
       </div>
 
     </div>

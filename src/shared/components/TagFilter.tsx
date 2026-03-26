@@ -2,7 +2,8 @@
  * Shared TagFilter component — used by both popup and dashboard.
  * Supports single-select (popup) and multi-select (dashboard).
  */
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { ChevronFirst } from "lucide-react";
 
 interface Props {
   tags: string[];
@@ -49,9 +50,50 @@ export default function TagFilter({ tags, active, onSelect }: Props) {
     return () => el.removeEventListener("wheel", onWheel);
   }, []);
 
+  // Smooth scroll to the active tag
+  useEffect(() => {
+    if (!active || !scrollRef.current) return;
+    
+    const tagToFind = Array.isArray(active) ? active[0] : active;
+    if (!tagToFind) return;
+
+    // We can use querySelector safely by escaping CSS characters in the tag
+    const btn = scrollRef.current.querySelector(
+      `[data-tag="${CSS.escape(tagToFind)}"]`
+    );
+    
+    if (btn) {
+      btn.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+    }
+  }, [active]);
+
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const handleScroll = () => setCanScrollLeft(el.scrollLeft > 20);
+    el.addEventListener("scroll", handleScroll, { passive: true });
+    // Check initial state after a tiny delay to ensure layout is done
+    setTimeout(handleScroll, 100);
+    return () => el.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <div ref={scrollRef} className="tags-scroll flex gap-1.5 overflow-x-auto pb-1">
-      {/* "All" chip */}
+    <div className="relative w-full min-w-0 flex items-center">
+      {canScrollLeft && (
+        <div className="absolute left-0 top-0 bottom-1 w-12 flex items-center z-10 bg-gradient-to-r from-mt-bg via-mt-bg/95 to-transparent pointer-events-none">
+          <button
+            onClick={() => scrollRef.current?.scrollTo({ left: 0, behavior: "smooth" })}
+            className="pointer-events-auto shrink-0 rounded-full bg-mt-bg-input border border-mt-border text-mt-text-dim hover:text-mt-accent hover:border-mt-accent transition-colors flex items-center justify-center w-6 h-6 shadow-sm"
+            title="Scroll to start"
+          >
+            <ChevronFirst size={13} strokeWidth={2.5} />
+          </button>
+        </div>
+      )}
+      <div ref={scrollRef} className="tags-scroll flex gap-1.5 overflow-x-auto pb-1 w-full">
+        {/* "All" chip */}
       <button
         onClick={() => onSelect(null)}
         className={`shrink-0 px-2.5 py-0.5 rounded-full text-xs font-medium border transition-colors
@@ -66,6 +108,7 @@ export default function TagFilter({ tags, active, onSelect }: Props) {
       {tags.map((tag) => (
         <button
           key={tag}
+          data-tag={tag}
           onClick={() => onSelect(isActive(tag) ? null : tag)}
           className={`shrink-0 px-2.5 py-0.5 rounded-full text-xs font-medium border transition-colors
             ${isActive(tag)
@@ -76,6 +119,7 @@ export default function TagFilter({ tags, active, onSelect }: Props) {
           {tag}
         </button>
       ))}
+      </div>
     </div>
   );
 }

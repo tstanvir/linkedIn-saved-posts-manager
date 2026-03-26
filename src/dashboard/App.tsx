@@ -330,7 +330,7 @@ export default function DashboardApp() {
                   ✓
                 </button>
                 <div className="pl-6 h-full">
-                  <PostCard post={post} onDelete={deletePost} className="h-full" />
+                  <PostCard post={post} onDelete={deletePost} onTagClick={setActiveTag} activeTag={activeTag} className="h-full" />
                 </div>
               </div>
             ))}
