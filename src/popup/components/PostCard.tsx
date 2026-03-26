@@ -21,7 +21,7 @@ export default function PostCard({ post, onDelete }: Props) {
     const parts = text.split(/(#[\w\u00C0-\u024F]+)/g);
     return parts.map((part, i) =>
       part.startsWith("#") ? (
-        <span key={i} className="text-linkedin font-medium">
+        <span key={i} className="text-mt-accent font-medium">
           {part}
         </span>
       ) : (
@@ -33,7 +33,7 @@ export default function PostCard({ post, onDelete }: Props) {
   const displayTags = (post.aiTags && post.aiTags.length > 0) ? post.aiTags : post.tags;
 
   return (
-    <div className="border border-gray-100 rounded-xl p-3 bg-white hover:border-gray-200 hover:shadow-sm transition-all shrink-0">
+    <div className="border border-mt-border rounded-xl p-3 bg-mt-bg-card hover:border-mt-accent/40 hover:shadow-sm transition-all shrink-0">
       {/* Author row */}
       <div className="flex items-start justify-between gap-2 mb-2">
         <div className="flex items-center gap-2 min-w-0">
@@ -41,19 +41,19 @@ export default function PostCard({ post, onDelete }: Props) {
             <img
               src={post.authorAvatar}
               alt={post.author}
-              className="w-8 h-8 rounded-full object-cover shrink-0 bg-gray-100"
+              className="w-8 h-8 rounded-full object-cover shrink-0 bg-mt-bg-input"
             />
           ) : (
-            <div className="w-8 h-8 rounded-full bg-gray-200 shrink-0 flex items-center justify-center text-gray-500 text-xs font-semibold">
+            <div className="w-8 h-8 rounded-full bg-mt-bg-input shrink-0 flex items-center justify-center text-mt-text-dim text-xs font-semibold">
               {post.author.charAt(0).toUpperCase()}
             </div>
           )}
           <div className="min-w-0">
-            <p className="text-xs font-semibold text-gray-800 truncate leading-tight">
+            <p className="text-xs font-semibold text-mt-text truncate leading-tight">
               {post.author || "Unknown"}
             </p>
             {post.authorHeadline && (
-              <p className="text-[10px] text-gray-400 truncate leading-tight">
+              <p className="text-[10px] text-mt-text-dim truncate leading-tight">
                 {post.authorHeadline}
               </p>
             )}
@@ -66,7 +66,7 @@ export default function PostCard({ post, onDelete }: Props) {
               href={post.url}
               target="_blank"
               rel="noreferrer"
-              className="text-gray-400 hover:text-linkedin transition-colors"
+              className="text-mt-text-dim hover:text-mt-accent transition-colors"
               title="Open on LinkedIn"
             >
               <ExternalLink size={13} />
@@ -75,7 +75,7 @@ export default function PostCard({ post, onDelete }: Props) {
           <button
             onClick={() => onDelete(post.id)}
             title="Remove from list"
-            className="text-gray-300 hover:text-red-400 transition-colors"
+            className="text-mt-border hover:text-mt-error transition-colors"
           >
             <X size={13} />
           </button>
@@ -84,14 +84,14 @@ export default function PostCard({ post, onDelete }: Props) {
 
       {/* AI Summary */}
       {post.aiSummary && (
-        <p className="text-[11px] text-gray-500 italic mb-1.5 leading-snug border-l-2 border-linkedin/30 pl-2">
+        <p className="text-[11px] text-mt-text-dim italic mb-1.5 leading-snug border-l-2 border-mt-accent/30 pl-2">
           {post.aiSummary}
         </p>
       )}
 
       {/* Content */}
       {post.content && (
-        <div className="text-xs text-gray-700 leading-relaxed whitespace-pre-line">
+        <div className="text-xs text-mt-text leading-relaxed whitespace-pre-line">
           {renderContent(displayContent)}
         </div>
       )}
@@ -100,7 +100,7 @@ export default function PostCard({ post, onDelete }: Props) {
       {isLong && (
         <button
           onClick={() => setExpanded((v) => !v)}
-          className="flex items-center gap-0.5 mt-1 text-[10px] text-gray-400 hover:text-linkedin transition-colors"
+          className="flex items-center gap-0.5 mt-1 text-[10px] text-mt-text-dim hover:text-mt-accent transition-colors"
         >
           {expanded ? (
             <><ChevronUp size={11} /> Show less</>
@@ -116,7 +116,7 @@ export default function PostCard({ post, onDelete }: Props) {
           {displayTags.map((tag) => (
             <span
               key={tag}
-              className="text-[10px] bg-blue-50 text-linkedin px-1.5 py-0.5 rounded-full"
+              className="text-[10px] bg-mt-accent-subtle text-mt-accent px-1.5 py-0.5 rounded-full"
             >
               {tag}
             </span>
@@ -126,7 +126,7 @@ export default function PostCard({ post, onDelete }: Props) {
 
       {/* Timestamp */}
       {post.postedAt && (
-        <p className="text-[10px] text-gray-300 mt-2">{post.postedAt}</p>
+        <p className="text-[10px] text-mt-border mt-2">{post.postedAt}</p>
       )}
     </div>
   );

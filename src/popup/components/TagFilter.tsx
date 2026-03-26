@@ -12,8 +12,8 @@ export default function TagFilter({ tags, active, onSelect }: Props) {
         onClick={() => onSelect(null)}
         className={`shrink-0 px-2.5 py-0.5 rounded-full text-xs font-medium border transition-colors
           ${active === null
-            ? "bg-linkedin text-white border-linkedin"
-            : "bg-white text-gray-600 border-gray-200 hover:border-linkedin hover:text-linkedin"
+            ? "bg-mt-accent text-black border-mt-accent"
+            : "bg-mt-bg-input text-mt-text-dim border-mt-border hover:border-mt-accent hover:text-mt-accent"
           }`}
       >
         All
@@ -25,8 +25,8 @@ export default function TagFilter({ tags, active, onSelect }: Props) {
           onClick={() => onSelect(active === tag ? null : tag)}
           className={`shrink-0 px-2.5 py-0.5 rounded-full text-xs font-medium border transition-colors
             ${active === tag
-              ? "bg-linkedin text-white border-linkedin"
-              : "bg-white text-gray-600 border-gray-200 hover:border-linkedin hover:text-linkedin"
+              ? "bg-mt-accent text-black border-mt-accent"
+              : "bg-mt-bg-input text-mt-text-dim border-mt-border hover:border-mt-accent hover:text-mt-accent"
             }`}
         >
           {tag}

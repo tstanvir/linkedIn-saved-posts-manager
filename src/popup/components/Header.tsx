@@ -32,19 +32,19 @@ export default function Header({
   const scraping = status === "scraping";
 
   return (
-    <div className="flex items-center justify-between pl-3 pr-4 py-2.5 border-b border-gray-100 bg-white shadow-sm shrink-0 z-10 relative">
+    <div className="flex items-center justify-between pl-3 pr-4 py-2.5 border-b border-mt-border bg-mt-bg-card shadow-sm shrink-0 z-10 relative">
       <div className="flex items-center gap-2">
-        <div className="w-6 h-6 rounded bg-linkedin flex items-center justify-center">
-          <span className="text-white text-xs font-bold leading-none">in</span>
+        <div className="w-6 h-6 rounded bg-mt-accent flex items-center justify-center">
+          <span className="text-black text-xs font-bold leading-none">in</span>
         </div>
         <div>
-          <p className="text-sm font-semibold text-gray-800 leading-tight">Saved Posts</p>
+          <p className="text-sm font-semibold text-mt-text leading-tight">Saved Posts</p>
           {lastScraped ? (
-            <p className="text-[10px] text-gray-400 leading-tight">
+            <p className="text-[10px] text-mt-text-dim leading-tight">
               {postCount} posts · {formatDate(lastScraped)}
             </p>
           ) : (
-            <p className="text-[10px] text-gray-400 leading-tight">Not synced yet</p>
+            <p className="text-[10px] text-mt-text-dim leading-tight">Not synced yet</p>
           )}
         </div>
       </div>
@@ -61,7 +61,7 @@ export default function Header({
         <button
           onClick={onOpenDashboard}
           title="Open full dashboard"
-          className="text-gray-400 hover:text-linkedin transition-colors"
+          className="text-mt-text-dim hover:text-mt-accent transition-colors"
         >
           <LayoutDashboard size={14} />
         </button>
@@ -73,8 +73,8 @@ export default function Header({
           title={scraping ? "Syncing…" : "Sync saved posts"}
           className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors
             ${scraping
-              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-              : "bg-linkedin text-white hover:bg-blue-700 active:bg-blue-800"
+              ? "bg-mt-bg-input text-mt-text-dim cursor-not-allowed"
+              : "bg-mt-accent text-black hover:bg-mt-accent-hover"
             }`}
         >
           {scraping ? (

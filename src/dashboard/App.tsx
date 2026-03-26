@@ -200,17 +200,17 @@ export default function DashboardApp() {
   const sortLabel = `${sortField === "scrapedAt" ? "Scraped" : sortField === "postedAt" ? "Posted" : "Author"} ${sortDir === "desc" ? "↓" : "↑"}`;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-mt-bg">
       {/* ─── Header ────────────────────────────────────────────────────────── */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-20">
+      <header className="bg-mt-bg-card border-b border-mt-border sticky top-0 z-20">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-linkedin flex items-center justify-center">
-              <LayoutDashboard size={16} className="text-white" />
+            <div className="w-8 h-8 rounded-lg bg-mt-accent flex items-center justify-center">
+              <LayoutDashboard size={16} className="text-[#323437]" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-gray-900">Saved Posts Dashboard</h1>
-              <p className="text-xs text-gray-400">
+              <h1 className="text-lg font-bold text-mt-text">Saved Posts Dashboard</h1>
+              <p className="text-xs text-mt-text-dim">
                 {posts.length} posts
                 {lastScraped && ` · Last synced ${new Date(lastScraped).toLocaleDateString()}`}
               </p>
@@ -220,21 +220,21 @@ export default function DashboardApp() {
           <div className="flex items-center gap-2">
             {/* Export dropdown */}
             <div className="relative group">
-              <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+              <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-mt-text-dim bg-mt-bg-input hover:text-mt-text hover:bg-mt-border rounded-lg transition-colors">
                 <Download size={13} />
                 Export{selected.size > 0 && ` (${selected.size})`}
               </button>
               <div className="absolute right-0 top-full pt-1 hidden group-hover:block z-30 min-w-[120px]">
-                <div className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
+                <div className="bg-mt-bg-card border border-mt-border rounded-lg shadow-lg overflow-hidden">
                   <button
                     onClick={() => handleExport("csv")}
-                    className="block w-full text-left px-3 py-2 text-xs hover:bg-gray-50 transition-colors"
+                    className="block w-full text-left px-3 py-2 text-xs text-mt-text hover:bg-mt-bg transition-colors"
                   >
                     Export CSV
                   </button>
                   <button
                     onClick={() => handleExport("json")}
-                    className="block w-full text-left px-3 py-2 text-xs hover:bg-gray-50 transition-colors border-t border-gray-50"
+                    className="block w-full text-left px-3 py-2 text-xs text-mt-text hover:bg-mt-bg transition-colors border-t border-mt-border"
                   >
                     Export JSON
                   </button>
@@ -246,7 +246,7 @@ export default function DashboardApp() {
             {selected.size > 0 && (
               <button
                 onClick={bulkDelete}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-mt-error bg-mt-error/10 hover:bg-mt-error/20 rounded-lg transition-colors"
               >
                 <Trash2 size={13} />
                 Delete {selected.size}
@@ -259,8 +259,8 @@ export default function DashboardApp() {
               disabled={syncing}
               className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors
                 ${syncing
-                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                  : "bg-linkedin text-white hover:bg-blue-700"
+                  ? "bg-mt-bg-input text-mt-text-dim cursor-not-allowed"
+                  : "bg-mt-accent text-[#323437] hover:bg-mt-accent-hover"
                 }`}
             >
               {syncing ? <Loader2 size={13} className="animate-spin" /> : <RefreshCw size={13} />}
@@ -278,7 +278,7 @@ export default function DashboardApp() {
           </div>
           <button
             onClick={cycleSort}
-            className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors shrink-0"
+            className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-mt-text-dim bg-mt-bg-card border border-mt-border rounded-lg hover:text-mt-text hover:bg-mt-bg transition-colors shrink-0"
             title="Cycle sort field and direction"
           >
             <ArrowUpDown size={12} />
@@ -291,12 +291,12 @@ export default function DashboardApp() {
         )}
 
         {/* Selection toolbar */}
-        <div className="flex items-center gap-3 text-xs text-gray-500">
-          <button onClick={selected.size === filtered.length ? deselectAll : selectAll} className="flex items-center gap-1 hover:text-linkedin transition-colors">
+        <div className="flex items-center gap-3 text-xs text-mt-text-dim">
+          <button onClick={selected.size === filtered.length ? deselectAll : selectAll} className="flex items-center gap-1 hover:text-mt-accent transition-colors">
             {selected.size === filtered.length && filtered.length > 0 ? <CheckSquare size={12} /> : <Square size={12} />}
             {selected.size > 0 ? `${selected.size} selected` : "Select all"}
           </button>
-          <span className="text-gray-300">|</span>
+          <span className="text-mt-border">|</span>
           <span>{filtered.length} of {posts.length} posts shown</span>
         </div>
       </div>
@@ -304,7 +304,7 @@ export default function DashboardApp() {
       {/* ─── Post Grid ─────────────────────────────────────────────────────── */}
       <main className="max-w-5xl mx-auto px-6 py-4">
         {filtered.length === 0 ? (
-          <div className="text-center py-20 text-gray-400">
+          <div className="text-center py-20 text-mt-text-dim">
             <p className="text-sm font-medium">
               {posts.length === 0 ? "No saved posts yet" : "No posts match your filters"}
             </p>
@@ -313,7 +313,7 @@ export default function DashboardApp() {
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
             {filtered.map((post) => (
               <div key={post.id} className="relative">
                 {/* Selection checkbox */}
@@ -321,8 +321,8 @@ export default function DashboardApp() {
                   onClick={() => toggleSelect(post.id)}
                   className={`absolute top-2 left-2 z-10 w-5 h-5 rounded border flex items-center justify-center text-xs transition-colors
                     ${selected.has(post.id)
-                      ? "bg-linkedin border-linkedin text-white"
-                      : "bg-white border-gray-300 text-transparent hover:border-linkedin"
+                      ? "bg-mt-accent border-mt-accent text-[#323437]"
+                      : "bg-mt-bg border-mt-border text-transparent hover:border-mt-accent"
                     }`}
                 >
                   ✓

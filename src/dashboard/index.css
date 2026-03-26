@@ -6,7 +6,8 @@ html,
 body {
   margin: 0;
   padding: 0;
-  background: #f9fafb; /* gray-50 */
+  background: #323437; /* mt-bg */
+  color-scheme: dark;
 }
 
 #root {
@@ -18,7 +19,7 @@ body {
   width: 4px;
 }
 .posts-scroll::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #555555;
   border-radius: 2px;
 }
 
@@ -27,6 +28,6 @@ body {
   height: 4px;
 }
 .tags-scroll::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #555555;
   border-radius: 2px;
 }

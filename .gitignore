@@ -41,6 +41,9 @@ icons/icon32.png
 icons/icon48.png
 icons/icon128.png
 
+# Antigravity artifacts
+.artifacts/
+
 # Package manager lock files (keep only one — uncomment the one you don't use)
 # package-lock.json
 # yarn.lock

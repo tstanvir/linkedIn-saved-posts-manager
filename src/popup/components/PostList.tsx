@@ -11,7 +11,7 @@ interface Props {
 export default function PostList({ posts, totalCount, onDelete }: Props) {
   if (totalCount === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-full gap-3 text-gray-400">
+      <div className="flex flex-col items-center justify-center h-full gap-3 text-mt-text-dim">
         <BookmarkX size={36} strokeWidth={1.2} />
         <div className="text-center">
           <p className="text-sm font-medium">No saved posts yet</p>
@@ -25,7 +25,7 @@ export default function PostList({ posts, totalCount, onDelete }: Props) {
 
   if (posts.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-full gap-2 text-gray-400">
+      <div className="flex flex-col items-center justify-center h-full gap-2 text-mt-text-dim">
         <p className="text-sm">No posts match your filters</p>
       </div>
     );

@@ -89,7 +89,7 @@ export default function App() {
   });
 
   return (
-    <div className="flex flex-col bg-white select-none overflow-hidden relative w-[450px] h-[600px]">
+    <div className="flex flex-col bg-mt-bg select-none overflow-hidden relative w-[450px] h-[600px]">
       <Header
         lastScraped={lastScraped}
         status={status}
