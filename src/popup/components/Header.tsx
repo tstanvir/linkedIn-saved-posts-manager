@@ -1,4 +1,5 @@
 import { RefreshCw, Loader2, LayoutDashboard } from "lucide-react";
+import ThemeSwitcher from "../../shared/components/ThemeSwitcher";
 
 type ScrapeStatus = "idle" | "scraping" | "done" | "error";
 
@@ -56,6 +57,9 @@ export default function Header({
             {statusMsg || "Sync failed"}
           </span>
         )}
+
+        {/* Theme Switcher */}
+        <ThemeSwitcher iconOnly />
 
         {/* Open Dashboard */}
         <button

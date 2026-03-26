@@ -1,3 +1,5 @@
+@import "../shared/themes.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -6,7 +8,7 @@ html,
 body {
   margin: 0;
   padding: 0;
-  background: #323437; /* mt-bg */
+  background: var(--mt-bg); /* mt-bg */
   color-scheme: dark;
 }
 
@@ -19,7 +21,7 @@ body {
   width: 4px;
 }
 .posts-scroll::-webkit-scrollbar-thumb {
-  background: #555555;
+  background: var(--mt-border);
   border-radius: 2px;
 }
 
@@ -28,6 +30,6 @@ body {
   height: 4px;
 }
 .tags-scroll::-webkit-scrollbar-thumb {
-  background: #555555;
+  background: var(--mt-border);
   border-radius: 2px;
 }

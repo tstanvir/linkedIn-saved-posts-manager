@@ -10,6 +10,8 @@ import { loadStorage } from "../shared/storage";
 import SearchBar from "../shared/components/SearchBar";
 import TagFilter from "../shared/components/TagFilter";
 import PostCard from "../shared/components/PostCard";
+import ThemeSwitcher from "../shared/components/ThemeSwitcher";
+import { useTheme } from "../shared/hooks/useTheme";
 import { exportToCsv, exportToJson, downloadFile } from "../shared/export";
 import {
   RefreshCw, Loader2, Download, Trash2, LayoutDashboard,
@@ -43,6 +45,7 @@ function getApproximateTimestamp(postedAt: string | undefined, scrapedAt: string
 }
 
 export default function DashboardApp() {
+  useTheme();
   const [posts, setPosts] = useState<Post[]>([]);
   const [lastScraped, setLastScraped] = useState<string | null>(null);
   const [search, setSearch] = useState("");
@@ -218,6 +221,7 @@ export default function DashboardApp() {
           </div>
 
           <div className="flex items-center gap-2">
+            <ThemeSwitcher />
             {/* Export dropdown */}
             <div className="relative group">
               <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-mt-text-dim bg-mt-bg-input hover:text-mt-text hover:bg-mt-border rounded-lg transition-colors">

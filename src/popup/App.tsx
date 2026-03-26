@@ -5,10 +5,12 @@ import SearchBar from "../shared/components/SearchBar";
 import TagFilter from "../shared/components/TagFilter";
 import PostList from "./components/PostList";
 import Header from "./components/Header";
+import { useTheme } from "../shared/hooks/useTheme";
 
 type ScrapeStatus = "idle" | "scraping" | "done" | "error";
 
 export default function App() {
+  useTheme();
   const [posts, setPosts] = useState<Post[]>([]);
   const [lastScraped, setLastScraped] = useState<string | null>(null);
   const [search, setSearch] = useState("");

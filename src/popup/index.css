@@ -1,3 +1,5 @@
+@import "../shared/themes.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -10,7 +12,7 @@
   background: transparent;
 }
 .tags-scroll::-webkit-scrollbar-thumb {
-  background-color: #555555;
+  background-color: var(--mt-border);
   border-radius: 4px;
 }
 .tags-scroll::-webkit-scrollbar-thumb:hover {
@@ -22,7 +24,7 @@ body {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background: #323437;
+  background: var(--mt-bg);
   color-scheme: dark;
 }
 
@@ -35,7 +37,7 @@ body {
   width: 4px;
 }
 .posts-scroll::-webkit-scrollbar-thumb {
-  background: #555555;
+  background: var(--mt-border);
   border-radius: 2px;
 }
 
@@ -44,6 +46,6 @@ body {
   height: 4px;
 }
 .tags-scroll::-webkit-scrollbar-thumb {
-  background: #555555;
+  background: var(--mt-border);
   border-radius: 2px;
 }
