@@ -313,9 +313,9 @@ export default function DashboardApp() {
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
             {filtered.map((post) => (
-              <div key={post.id} className="relative">
+              <div key={post.id} className="relative h-full">
                 {/* Selection checkbox */}
                 <button
                   onClick={() => toggleSelect(post.id)}
@@ -327,8 +327,8 @@ export default function DashboardApp() {
                 >
                   ✓
                 </button>
-                <div className="pl-6">
-                  <PostCard post={post} onDelete={deletePost} />
+                <div className="pl-6 h-full">
+                  <PostCard post={post} onDelete={deletePost} className="h-full" />
                 </div>
               </div>
             ))}

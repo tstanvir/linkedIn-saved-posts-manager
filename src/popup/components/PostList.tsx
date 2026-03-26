@@ -1,5 +1,5 @@
 import { Post } from "../../shared/types";
-import PostCard from "./PostCard";
+import PostCard from "../../shared/components/PostCard";
 import { BookmarkX } from "lucide-react";
 
 interface Props {

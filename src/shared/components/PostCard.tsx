@@ -2,44 +2,20 @@
  * Shared PostCard component — used by both popup and dashboard.
  * Extracted from popup/components/PostCard.tsx.
  */
-import { useState } from "react";
 import { Post } from "../types";
-import { ExternalLink, ChevronDown, ChevronUp, X } from "lucide-react";
+import { ExternalLink, X } from "lucide-react";
 
 interface Props {
   post: Post;
   onDelete: (id: string) => void;
-  /** If true, shows full content by default (dashboard mode). */
-  expandedByDefault?: boolean;
+  className?: string;
 }
 
-const PREVIEW_LENGTH = 160;
-
-export default function PostCard({ post, onDelete, expandedByDefault = false }: Props) {
-  const [expanded, setExpanded] = useState(expandedByDefault);
-  const isLong = post.content.length > PREVIEW_LENGTH;
-
-  const displayContent =
-    expanded || !isLong ? post.content : post.content.slice(0, PREVIEW_LENGTH) + "…";
-
-  // Highlight #hashtags in content
-  const renderContent = (text: string) => {
-    const parts = text.split(/(#[\w\u00C0-\u024F]+)/g);
-    return parts.map((part, i) =>
-      part.startsWith("#") ? (
-        <span key={i} className="text-mt-accent font-medium">
-          {part}
-        </span>
-      ) : (
-        <span key={i}>{part}</span>
-      )
-    );
-  };
-
+export default function PostCard({ post, onDelete, className = "" }: Props) {
   const displayTags = (post.aiTags && post.aiTags.length > 0) ? post.aiTags : post.tags;
 
   return (
-    <div className="border border-mt-border shadow-sm rounded-xl p-3.5 bg-mt-bg-card hover:border-mt-accent/40 hover:shadow-md transition-all shrink-0 group">
+    <div className={`border border-mt-border shadow-sm rounded-xl p-3.5 bg-mt-bg-card hover:border-mt-accent/40 hover:shadow-md transition-all shrink-0 group flex flex-col ${className}`.trim()}>
       {/* Author row */}
       <div className="flex items-start justify-between gap-2 mb-2">
         <div className="flex items-center gap-2 min-w-0">
@@ -97,38 +73,13 @@ export default function PostCard({ post, onDelete, expandedByDefault = false }: 
         </div>
       )}
 
-      {/* Content */}
-      {post.content ? (
-        <div className="text-xs text-mt-text leading-relaxed whitespace-pre-line">
-          {renderContent(displayContent)}
-        </div>
-      ) : (
-        <div className="text-[11px] text-mt-text-dim italic bg-mt-bg-input rounded-lg p-2.5 text-center my-1 border border-dashed border-mt-border">
-          No text content visible. This is likely an image or video post.
-        </div>
-      )}
-
-      {/* Expand/collapse */}
-      {isLong && (
-        <button
-          onClick={() => setExpanded((v) => !v)}
-          className="flex items-center gap-0.5 mt-1 text-[10px] text-mt-text-dim hover:text-mt-accent transition-colors"
-        >
-          {expanded ? (
-            <><ChevronUp size={11} /> Show less</>
-          ) : (
-            <><ChevronDown size={11} /> Show more</>
-          )}
-        </button>
-      )}
-
       {/* Tags */}
       {displayTags.length > 0 && (
-        <div className="flex flex-wrap gap-1.5 mt-2.5">
+        <div className="flex gap-1.5 mt-auto pt-2 overflow-x-auto tags-scroll whitespace-nowrap">
           {displayTags.map((tag) => (
             <span
               key={tag}
-              className="text-[10px] bg-mt-accent-subtle text-mt-accent border border-mt-accent/20 px-2 py-0.5 rounded-full font-medium shadow-sm transition-colors hover:bg-mt-accent/20"
+              className="text-[10px] bg-mt-accent-subtle text-mt-accent border border-mt-accent/20 px-2 py-0.5 rounded-full font-medium shadow-sm transition-colors hover:bg-mt-accent/20 shrink-0"
             >
               {tag}
             </span>
