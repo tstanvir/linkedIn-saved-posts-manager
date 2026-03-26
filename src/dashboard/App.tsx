@@ -18,7 +18,7 @@ import {
   ArrowUpDown, CheckSquare, Square,
 } from "lucide-react";
 
-type SortField = "scrapedAt" | "postedAt" | "author";
+type SortField = "postedAt" | "author";
 type SortDir = "asc" | "desc";
 
 // Converts LinkedIn relative times ("1w", "3mo") into approximate timestamps
@@ -50,7 +50,7 @@ export default function DashboardApp() {
   const [lastScraped, setLastScraped] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [activeTag, setActiveTag] = useState<string | null>(null);
-  const [sortField, setSortField] = useState<SortField>("scrapedAt");
+  const [sortField, setSortField] = useState<SortField>("postedAt");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [syncing, setSyncing] = useState(false);
@@ -162,9 +162,7 @@ export default function DashboardApp() {
     // Sort
     result = [...result].sort((a, b) => {
       let cmp = 0;
-      if (sortField === "scrapedAt") {
-        cmp = a.scrapedAt.localeCompare(b.scrapedAt);
-      } else if (sortField === "postedAt") {
+      if (sortField === "postedAt") {
         const timeA = getApproximateTimestamp(a.postedAt, a.scrapedAt);
         const timeB = getApproximateTimestamp(b.postedAt, b.scrapedAt);
         cmp = timeA - timeB;
@@ -190,7 +188,7 @@ export default function DashboardApp() {
 
   // ── Cycle sort ────────────────────────────────────────────────────────────
   const cycleSort = () => {
-    const fields: SortField[] = ["scrapedAt", "postedAt", "author"];
+    const fields: SortField[] = ["postedAt", "author"];
     const idx = fields.indexOf(sortField);
     if (sortDir === "desc") {
       setSortDir("asc");
@@ -200,7 +198,7 @@ export default function DashboardApp() {
     }
   };
 
-  const sortLabel = `${sortField === "scrapedAt" ? "Scraped" : sortField === "postedAt" ? "Posted" : "Author"} ${sortDir === "desc" ? "↓" : "↑"}`;
+  const sortLabel = `${sortField === "postedAt" ? "Posted" : "Author"} ${sortDir === "desc" ? "↓" : "↑"}`;
 
   return (
     <div className="min-h-screen bg-mt-bg">
