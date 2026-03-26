@@ -3,7 +3,7 @@
   "name": "LinkedIn Saved Posts Manager",
   "version": "1.0.0",
   "description": "Browse, search, and filter your LinkedIn saved posts by hashtag.",
-  "permissions": ["storage", "activeTab", "scripting"],
+  "permissions": ["storage", "activeTab"],
   "host_permissions": ["https://www.linkedin.com/*"],
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'"

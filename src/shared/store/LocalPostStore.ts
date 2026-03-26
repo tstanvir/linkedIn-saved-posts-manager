@@ -10,7 +10,7 @@ import { db } from "./db";
 
 export class LocalPostStore implements IPostStore {
   async getAll(): Promise<Post[]> {
-    return db.posts.toArray();
+    return db.posts.orderBy("scrapedAt").reverse().toArray();
   }
 
   async getById(id: string): Promise<Post | undefined> {

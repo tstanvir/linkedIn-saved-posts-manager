@@ -3,6 +3,7 @@
  * Extracted from popup/components/PostCard.tsx.
  */
 import { Post } from "../types";
+import { sanitizeUrl } from "../sanitize";
 import { ExternalLink, X } from "lucide-react";
 
 interface Props {
@@ -15,15 +16,17 @@ interface Props {
 
 export default function PostCard({ post, onDelete, onTagClick, activeTag, className = "" }: Props) {
   const displayTags = (post.aiTags && post.aiTags.length > 0) ? post.aiTags : post.tags;
+  const safeUrl = sanitizeUrl(post.url);
+  const safeAvatar = sanitizeUrl(post.authorAvatar);
 
   return (
     <div className={`border border-mt-border shadow-sm rounded-xl p-3.5 bg-mt-bg-card hover:border-mt-accent/40 hover:shadow-md transition-all shrink-0 group flex flex-col ${className}`.trim()}>
       {/* Author row */}
       <div className="flex items-start justify-between gap-2 mb-2">
         <div className="flex items-center gap-2 min-w-0">
-          {post.authorAvatar ? (
+          {safeAvatar ? (
             <img
-              src={post.authorAvatar}
+              src={safeAvatar}
               alt={post.author}
               className="w-8 h-8 rounded-full object-cover shrink-0 bg-mt-bg-input"
             />
@@ -45,9 +48,9 @@ export default function PostCard({ post, onDelete, onTagClick, activeTag, classN
         </div>
 
           <div className="flex items-center gap-1 shrink-0 mt-0.5">
-          {post.url && (
+          {safeUrl && (
             <a
-              href={post.url}
+              href={safeUrl}
               target="_blank"
               rel="noreferrer"
               className="text-mt-text-dim hover:text-mt-accent transition-colors"

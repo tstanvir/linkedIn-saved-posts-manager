@@ -6,7 +6,8 @@
  */
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { Post, MessageType } from "../shared/types";
-import { loadStorage } from "../shared/storage";
+import { postStore } from "../shared/store";
+import { loadSettings } from "../shared/settings";
 import SearchBar from "../shared/components/SearchBar";
 import TagFilter from "../shared/components/TagFilter";
 import PostCard from "../shared/components/PostCard";
@@ -54,13 +55,12 @@ export default function DashboardApp() {
   const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [syncing, setSyncing] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(50);
 
   // ── Load data ─────────────────────────────────────────────────────────────
   const loadPosts = useCallback(() => {
-    loadStorage().then((data) => {
-      setPosts(data.posts);
-      setLastScraped(data.lastScraped);
-    });
+    postStore.getAll().then(setPosts);
+    loadSettings().then((s) => setLastScraped(s.lastScraped));
   }, []);
 
   useEffect(() => { loadPosts(); }, [loadPosts]);
@@ -174,6 +174,11 @@ export default function DashboardApp() {
 
     return result;
   }, [posts, search, activeTag, sortField, sortDir]);
+
+  // Reset pagination when filters/sort change
+  useEffect(() => {
+    setVisibleCount(50);
+  }, [search, activeTag, sortField, sortDir]);
 
   // ── Export ────────────────────────────────────────────────────────────────
   const handleExport = (format: "csv" | "json") => {
@@ -315,26 +320,41 @@ export default function DashboardApp() {
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
-            {filtered.map((post) => (
-              <div key={post.id} className="relative h-full">
-                {/* Selection checkbox */}
-                <button
-                  onClick={() => toggleSelect(post.id)}
-                  className={`absolute top-2 left-2 z-10 w-5 h-5 rounded border flex items-center justify-center text-xs transition-colors
-                    ${selected.has(post.id)
-                      ? "bg-mt-accent border-mt-accent text-[#323437]"
-                      : "bg-mt-bg border-mt-border text-transparent hover:border-mt-accent"
-                    }`}
-                >
-                  ✓
-                </button>
-                <div className="pl-6 h-full">
-                  <PostCard post={post} onDelete={deletePost} onTagClick={setActiveTag} activeTag={activeTag} className="h-full" />
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
+              {filtered.slice(0, visibleCount).map((post) => (
+                <div key={post.id} className="relative h-full">
+                  {/* Selection checkbox */}
+                  <button
+                    onClick={() => toggleSelect(post.id)}
+                    className={`absolute top-2 left-2 z-10 w-5 h-5 rounded border flex items-center justify-center text-xs transition-colors
+                      ${selected.has(post.id)
+                        ? "bg-mt-accent border-mt-accent text-[#323437]"
+                        : "bg-mt-bg border-mt-border text-transparent hover:border-mt-accent"
+                      }`}
+                  >
+                    ✓
+                  </button>
+                  <div className="pl-6 h-full">
+                    <PostCard post={post} onDelete={deletePost} onTagClick={setActiveTag} activeTag={activeTag} className="h-full" />
+                  </div>
                 </div>
+              ))}
+            </div>
+            {visibleCount < filtered.length && (
+              <div className="mt-6 text-center">
+                <p className="text-xs text-mt-text-dim mb-2">
+                  Showing {visibleCount} of {filtered.length} posts
+                </p>
+                <button
+                  onClick={() => setVisibleCount((c) => c + 50)}
+                  className="px-5 py-2 text-xs font-medium text-mt-accent border border-mt-accent/30 rounded-lg hover:bg-mt-accent/10 transition-colors"
+                >
+                  Load {Math.min(50, filtered.length - visibleCount)} more
+                </button>
               </div>
-            ))}
-          </div>
+            )}
+          </>
         )}
       </main>
     </div>

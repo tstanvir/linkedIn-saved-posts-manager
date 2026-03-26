@@ -194,7 +194,7 @@ function findPostCards(): Element[] {
     }
   }
 
-  LOG("No cards found. Page HTML sample:", document.body.innerHTML.slice(0, 800));
+  LOG("No cards found. Check that the saved-posts page is fully loaded.");
   return [];
 }
 
@@ -220,10 +220,14 @@ async function scrape(): Promise<Post[]> {
 
   const posts: Post[] = [];
   const seen = new Set<string>();
+  const baseTime = Date.now();
 
   for (const card of cards) {
     const post = parseCard(card);
     if (post && !seen.has(post.id)) {
+      // Offset scrapedAt by position so IndexedDB preserves LinkedIn page order
+      // Post 0 (top of page = most recently saved) gets the latest timestamp
+      post.scrapedAt = new Date(baseTime - posts.length).toISOString();
       seen.add(post.id);
       posts.push(post);
     }

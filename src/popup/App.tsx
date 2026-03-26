@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { Post, MessageType } from "../shared/types";
-import { loadStorage } from "../shared/storage";
+import { postStore } from "../shared/store";
+import { loadSettings } from "../shared/settings";
 import SearchBar from "../shared/components/SearchBar";
 import TagFilter from "../shared/components/TagFilter";
 import PostList from "./components/PostList";
@@ -17,12 +18,15 @@ export default function App() {
   const [activeTag, setActiveTag] = useState<string | null>(null);
   const [status, setStatus] = useState<ScrapeStatus>("idle");
   const [statusMsg, setStatusMsg] = useState("");
-  useEffect(() => {
-    loadStorage().then((data) => {
-      setPosts(data.posts);
-      setLastScraped(data.lastScraped);
-    });
+
+  const refreshStorage = useCallback(() => {
+    postStore.getAll().then(setPosts);
+    loadSettings().then((s) => setLastScraped(s.lastScraped));
   }, []);
+
+  useEffect(() => {
+    refreshStorage();
+  }, [refreshStorage]);
 
   // ── Listen for broadcasts from background ────────────────────────────────
   useEffect(() => {
@@ -31,16 +35,13 @@ export default function App() {
         setStatus(msg.status);
         setStatusMsg(msg.message ?? "");
         if (msg.status === "done") {
-          loadStorage().then((data) => {
-            setPosts(data.posts);
-            setLastScraped(data.lastScraped);
-          });
+          refreshStorage();
         }
       }
     };
     chrome.runtime.onMessage.addListener(listener);
     return () => chrome.runtime.onMessage.removeListener(listener);
-  }, []);
+  }, [refreshStorage]);
 
   // ── Trigger scrape ────────────────────────────────────────────────────────
   const triggerScrape = useCallback(() => {
@@ -114,7 +115,6 @@ export default function App() {
       <div className="flex-1 overflow-hidden px-3 pt-2 pb-1">
         <PostList posts={filtered} totalCount={posts.length} onDelete={deletePost} onTagClick={setActiveTag} activeTag={activeTag} />
       </div>
-
     </div>
   );
 }

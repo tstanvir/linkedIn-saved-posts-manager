@@ -48,3 +48,7 @@ icons/icon128.png
 # package-lock.json
 # yarn.lock
 # pnpm-lock.yaml
+
+# Audit reports — private submission docs (not for version control)
+AuditReports/V1.md
+AuditReports/V2.md
