@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #f9fafb; /* gray-50 */
+}
+
+#root {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Thin scrollbar for the post list */
+.posts-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.posts-scroll::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 2px;
+}
+
+/* Thin scrollbar for horizontal tag strip */
+.tags-scroll::-webkit-scrollbar {
+  height: 4px;
+}
+.tags-scroll::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 2px;
+}
