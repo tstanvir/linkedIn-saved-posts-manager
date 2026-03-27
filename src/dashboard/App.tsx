@@ -14,9 +14,8 @@ import TagFilter from "../shared/components/TagFilter";
 import PostCard from "../shared/components/PostCard";
 import ThemeSwitcher from "../shared/components/ThemeSwitcher";
 import { useTheme } from "../shared/hooks/useTheme";
-import { exportToCsv, exportToJson, downloadFile } from "../shared/export";
 import {
-  RefreshCw, Loader2, Download, Trash2, LayoutDashboard,
+  RefreshCw, Loader2, Trash2, LayoutDashboard,
   ArrowUpDown, CheckSquare, Square,
 } from "lucide-react";
 
@@ -183,17 +182,6 @@ export default function DashboardApp() {
     setVisibleCount(50);
   }, [debouncedSearch, activeTag, sortField, sortDir]);
 
-  // ── Export ────────────────────────────────────────────────────────────────
-  const handleExport = useCallback((format: "csv" | "json") => {
-    const data = selected.size > 0
-      ? posts.filter((p) => selected.has(p.id))
-      : filtered;
-    const content = format === "csv" ? exportToCsv(data) : exportToJson(data);
-    const ext = format === "csv" ? "csv" : "json";
-    const mime = format === "csv" ? "text/csv" : "application/json";
-    downloadFile(content, `linkedin-saved-posts.${ext}`, mime);
-  }, [selected, posts, filtered]);
-
   // ── Cycle sort ────────────────────────────────────────────────────────────
   const cycleSort = useCallback(() => {
     const fields: SortField[] = ["postedAt", "author"];
@@ -226,29 +214,6 @@ export default function DashboardApp() {
 
           <div className="flex items-center gap-2">
             <ThemeSwitcher />
-            {/* Export dropdown */}
-            <div className="relative group">
-              <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-mt-text-dim bg-mt-bg-input hover:text-mt-text hover:bg-mt-border rounded-lg transition-colors">
-                <Download size={13} />
-                Export{selected.size > 0 && ` (${selected.size})`}
-              </button>
-              <div className="absolute right-0 top-full pt-1 hidden group-hover:block z-30 min-w-[120px]">
-                <div className="bg-mt-bg-card border border-mt-border rounded-lg shadow-lg overflow-hidden">
-                  <button
-                    onClick={() => handleExport("csv")}
-                    className="block w-full text-left px-3 py-2 text-xs text-mt-text hover:bg-mt-bg transition-colors"
-                  >
-                    Export CSV
-                  </button>
-                  <button
-                    onClick={() => handleExport("json")}
-                    className="block w-full text-left px-3 py-2 text-xs text-mt-text hover:bg-mt-bg transition-colors border-t border-mt-border"
-                  >
-                    Export JSON
-                  </button>
-                </div>
-              </div>
-            </div>
 
             {/* Bulk delete */}
             {selected.size > 0 && (
