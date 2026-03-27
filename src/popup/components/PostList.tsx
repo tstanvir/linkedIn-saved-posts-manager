@@ -9,7 +9,7 @@ interface Props {
   posts: Post[];
   totalCount: number;
   onDelete: (id: string) => void;
-  onTagClick?: (tag: string) => void;
+  onTagClick?: (tag: string | null) => void;
   activeTag?: string | null;
 }
 

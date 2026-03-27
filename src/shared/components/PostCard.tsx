@@ -9,7 +9,7 @@ import { ExternalLink, X } from "lucide-react";
 interface Props {
   post: Post;
   onDelete: (id: string) => void;
-  onTagClick?: (tag: string) => void;
+  onTagClick?: (tag: string | null) => void;
   activeTag?: string | null;
   className?: string;
 }
@@ -86,7 +86,7 @@ export default function PostCard({ post, onDelete, onTagClick, activeTag, classN
             return (
               <button
                 key={tag}
-                onClick={() => onTagClick?.(tag)}
+                onClick={() => onTagClick?.(isActive ? null : tag)}
                 className={`text-[10px] px-2 py-0.5 rounded-full font-medium shadow-sm transition-colors shrink-0
                   ${isActive 
                     ? "bg-mt-accent text-black border border-mt-accent" 
