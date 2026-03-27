@@ -29,8 +29,8 @@ function extractFirstSentence(text: string): string {
   const cleaned = cleanLeadingNoise(text);
   if (!cleaned) return "";
 
-  // Match up to the first sentence-ending punctuation
-  const match = cleaned.match(/^(.+?[.!?])(?:\s|$)/);
+  // Match up to the first sentence-ending punctuation (skip common abbreviations)
+  const match = cleaned.match(/^(.+?(?<!Mr|Ms|Dr|Jr|Sr|vs|etc|Prof|Inc|Ltd|Corp|St|Ave|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[.!?])(?:\s|$)/);
   if (match && match[1].length <= MAX_SUMMARY_LENGTH) {
     return match[1].trim();
   }

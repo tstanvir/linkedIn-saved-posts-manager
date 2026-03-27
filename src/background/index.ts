@@ -18,7 +18,7 @@ chrome.runtime.onInstalled.addListener(async () => {
   await migrateToIndexedDB();
 });
 // Safety net: also run on every service worker startup (idempotent, cheap flag check)
-migrateToIndexedDB().catch(() => {});
+migrateToIndexedDB().catch((e) => console.error("[LSPM] migration error:", e));
 
 // ─── Message routing ──────────────────────────────────────────────────────────
 chrome.runtime.onMessage.addListener((msg: MessageType, _sender, sendResponse) => {
@@ -72,10 +72,13 @@ async function handleTriggerScrape(
       const tagEngine = new KeywordTagEngine();
       const summaryEngine = new FirstSentenceSummaryEngine();
 
-      // Enrich new posts locally before merging
+      // Enrich new posts locally before merging (skip already-enriched)
       for (const post of response.posts) {
-        post.aiSummary = summaryEngine.generateSummary(post.content);
-        post.aiTags = tagEngine.generateTags(post.content);
+        if (!post.aiEnrichedAt) {
+          post.aiSummary = summaryEngine.generateSummary(post.content);
+          post.aiTags = tagEngine.generateTags(post.content);
+          post.aiEnrichedAt = new Date().toISOString();
+        }
       }
 
       // Merge new posts with existing — never replace

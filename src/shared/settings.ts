@@ -31,11 +31,12 @@ export async function loadSettings(): Promise<Settings> {
 }
 
 export async function saveSettings(patch: Partial<Settings>): Promise<void> {
-  const existing = await loadSettings();
   return new Promise((resolve) => {
-    chrome.storage.local.set(
-      { [SETTINGS_KEY]: { ...existing, ...patch } },
-      resolve
-    );
+    // Atomic read-modify-write within a single callback to avoid race conditions
+    chrome.storage.local.get(SETTINGS_KEY, (result) => {
+      const data = result[SETTINGS_KEY] as Partial<Settings> | undefined;
+      const merged = { ...DEFAULTS, ...data, ...patch };
+      chrome.storage.local.set({ [SETTINGS_KEY]: merged }, resolve);
+    });
   });
 }

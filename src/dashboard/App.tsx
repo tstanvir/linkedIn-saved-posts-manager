@@ -5,6 +5,7 @@
  * Opens in a new browser tab via chrome.tabs.create.
  */
 import { useEffect, useState, useCallback, useMemo } from "react";
+import { useDebounce } from "../shared/hooks/useDebounce";
 import { Post, MessageType } from "../shared/types";
 import { postStore } from "../shared/store";
 import { loadSettings } from "../shared/settings";
@@ -26,14 +27,14 @@ type SortDir = "asc" | "desc";
 function getApproximateTimestamp(postedAt: string | undefined, scrapedAt: string): number {
   const baseTime = new Date(scrapedAt).getTime();
   if (!postedAt) return baseTime;
-  
+
   const clean = postedAt.toLowerCase().replace(/.*•\s*/, "").trim();
   const match = clean.match(/^(\d+)\s*(m|h|d|w|mo|yr)/);
   if (!match) return baseTime;
-  
+
   const val = parseInt(match[1], 10);
   const unit = match[2];
-  
+
   let seconds = 0;
   if (unit === 'm') seconds = val * 60;
   else if (unit === 'h') seconds = val * 3600;
@@ -41,7 +42,7 @@ function getApproximateTimestamp(postedAt: string | undefined, scrapedAt: string
   else if (unit === 'w') seconds = val * 604800;
   else if (unit === 'mo') seconds = val * 2592000;
   else if (unit === 'yr') seconds = val * 31536000;
-  
+
   return baseTime - (seconds * 1000);
 }
 
@@ -104,19 +105,15 @@ export default function DashboardApp() {
   }, [selected]);
 
   // ── Selection ─────────────────────────────────────────────────────────────
-  const toggleSelect = (id: string) => {
+  const toggleSelect = useCallback((id: string) => {
     setSelected((prev) => {
       const s = new Set(prev);
       if (s.has(id)) s.delete(id); else s.add(id);
       return s;
     });
-  };
+  }, []);
 
-  const selectAll = () => {
-    setSelected(new Set(filtered.map((p) => p.id)));
-  };
-
-  const deselectAll = () => setSelected(new Set());
+  const deselectAll = useCallback(() => setSelected(new Set()), []);
 
   // ── Tags ──────────────────────────────────────────────────────────────────
   const allTags = useMemo(() => {
@@ -134,13 +131,15 @@ export default function DashboardApp() {
     });
   }, [posts]);
 
+  const debouncedSearch = useDebounce(search, 250);
+
   // ── Filter + Sort ─────────────────────────────────────────────────────────
   const filtered = useMemo(() => {
     let result = posts;
 
     // Text search
-    if (search) {
-      const q = search.toLowerCase();
+    if (debouncedSearch) {
+      const q = debouncedSearch.toLowerCase();
       result = result.filter(
         (p) =>
           p.content.toLowerCase().includes(q) ||
@@ -173,15 +172,19 @@ export default function DashboardApp() {
     });
 
     return result;
-  }, [posts, search, activeTag, sortField, sortDir]);
+  }, [posts, debouncedSearch, activeTag, sortField, sortDir]);
+
+  const selectAll = useCallback(() => {
+    setSelected(new Set(filtered.map((p) => p.id)));
+  }, [filtered]);
 
   // Reset pagination when filters/sort change
   useEffect(() => {
     setVisibleCount(50);
-  }, [search, activeTag, sortField, sortDir]);
+  }, [debouncedSearch, activeTag, sortField, sortDir]);
 
   // ── Export ────────────────────────────────────────────────────────────────
-  const handleExport = (format: "csv" | "json") => {
+  const handleExport = useCallback((format: "csv" | "json") => {
     const data = selected.size > 0
       ? posts.filter((p) => selected.has(p.id))
       : filtered;
@@ -189,19 +192,17 @@ export default function DashboardApp() {
     const ext = format === "csv" ? "csv" : "json";
     const mime = format === "csv" ? "text/csv" : "application/json";
     downloadFile(content, `linkedin-saved-posts.${ext}`, mime);
-  };
+  }, [selected, posts, filtered]);
 
   // ── Cycle sort ────────────────────────────────────────────────────────────
-  const cycleSort = () => {
+  const cycleSort = useCallback(() => {
     const fields: SortField[] = ["postedAt", "author"];
-    const idx = fields.indexOf(sortField);
-    if (sortDir === "desc") {
-      setSortDir("asc");
-    } else {
-      setSortDir("desc");
-      setSortField(fields[(idx + 1) % fields.length]);
-    }
-  };
+    setSortDir((prevDir) => {
+      if (prevDir === "desc") return "asc";
+      setSortField((prevField) => fields[(fields.indexOf(prevField) + 1) % fields.length]);
+      return "desc";
+    });
+  }, []);
 
   const sortLabel = `${sortField === "postedAt" ? "Posted" : "Author"} ${sortDir === "desc" ? "↓" : "↑"}`;
 
@@ -325,16 +326,13 @@ export default function DashboardApp() {
               {filtered.slice(0, visibleCount).map((post) => (
                 <div key={post.id} className="relative h-full">
                   {/* Selection checkbox */}
-                  <button
-                    onClick={() => toggleSelect(post.id)}
-                    className={`absolute top-2 left-2 z-10 w-5 h-5 rounded border flex items-center justify-center text-xs transition-colors
-                      ${selected.has(post.id)
-                        ? "bg-mt-accent border-mt-accent text-[#323437]"
-                        : "bg-mt-bg border-mt-border text-transparent hover:border-mt-accent"
-                      }`}
-                  >
-                    ✓
-                  </button>
+                  <input
+                    type="checkbox"
+                    checked={selected.has(post.id)}
+                    onChange={() => toggleSelect(post.id)}
+                    aria-label={`Select post by ${post.author}`}
+                    className="absolute top-2 left-2 z-10 w-4 h-4 rounded border border-mt-border accent-[var(--mt-accent)] cursor-pointer"
+                  />
                   <div className="pl-6 h-full">
                     <PostCard post={post} onDelete={deletePost} onTagClick={setActiveTag} activeTag={activeTag} className="h-full" />
                   </div>

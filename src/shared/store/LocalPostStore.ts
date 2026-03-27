@@ -42,10 +42,10 @@ export class LocalPostStore implements IPostStore {
   }
 
   async filterByTag(tag: string): Promise<Post[]> {
-    const fromTags = await db.posts.where("tags").equals(tag).toArray();
-    const fromAiTags = await db.posts
-      .filter((p) => p.aiTags?.includes(tag) ?? false)
-      .toArray();
+    const [fromTags, fromAiTags] = await Promise.all([
+      db.posts.where("tags").equals(tag).toArray(),
+      db.posts.where("aiTags").equals(tag).toArray(),
+    ]);
 
     // Deduplicate by ID
     const merged = new Map<string, Post>();

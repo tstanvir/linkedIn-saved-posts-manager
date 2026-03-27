@@ -12,8 +12,12 @@ export class LspmDatabase extends Dexie {
     super("lspm_db");
 
     this.version(1).stores({
-      // id = primary key, plus indexes for common queries
       posts: "id, scrapedAt, *tags",
+    });
+
+    this.version(2).stores({
+      // Added *aiTags multi-entry index for efficient tag filtering
+      posts: "id, scrapedAt, *tags, *aiTags",
     });
   }
 }

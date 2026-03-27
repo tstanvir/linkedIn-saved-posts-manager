@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
+import { useDebounce } from "../shared/hooks/useDebounce";
 import { Post, MessageType } from "../shared/types";
 import { postStore } from "../shared/store";
 import { loadSettings } from "../shared/settings";
@@ -76,9 +77,11 @@ export default function App() {
     });
   }, [posts]);
 
+  const debouncedSearch = useDebounce(search, 250);
+
   // ── Filter logic — search on content, summary, aiTags (not author) ────────
   const filtered = posts.filter((post) => {
-    const q = search.toLowerCase();
+    const q = debouncedSearch.toLowerCase();
     const matchesSearch =
       !q ||
       post.content.toLowerCase().includes(q) ||

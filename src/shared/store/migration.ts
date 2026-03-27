@@ -13,11 +13,21 @@ import { db } from "./db";
 
 const MIGRATION_FLAG = "lspm_migrated_to_idb";
 
+// Dedup lock — ensures only one migration runs even if called concurrently
+let migrating: Promise<boolean> | null = null;
+
 /**
  * Check if migration is needed and perform it.
  * Returns true if migration was performed, false if already done or no data to migrate.
  */
-export async function migrateToIndexedDB(): Promise<boolean> {
+export function migrateToIndexedDB(): Promise<boolean> {
+  if (!migrating) {
+    migrating = doMigrate().finally(() => { migrating = null; });
+  }
+  return migrating;
+}
+
+async function doMigrate(): Promise<boolean> {
   // Check if already migrated
   const flag = await new Promise<string | undefined>((resolve) => {
     chrome.storage.local.get(MIGRATION_FLAG, (result) => {

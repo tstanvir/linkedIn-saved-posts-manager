@@ -24,11 +24,16 @@ export function exportToCsv(posts: Post[]): string {
   ];
 
   const escapeField = (value: string): string => {
-    // If field contains comma, quote, or newline, wrap in quotes and escape internal quotes
-    if (value.includes(",") || value.includes('"') || value.includes("\n")) {
-      return `"${value.replace(/"/g, '""')}"`;
+    // Prevent CSV injection — Excel/Sheets treat leading =, +, -, @, \t, \r as formulas
+    let safe = value;
+    if (/^[=+\-@\t\r]/.test(safe)) {
+      safe = "'" + safe;
     }
-    return value;
+    // If field contains comma, quote, or newline, wrap in quotes and escape internal quotes
+    if (safe.includes(",") || safe.includes('"') || safe.includes("\n")) {
+      return `"${safe.replace(/"/g, '""')}"`;
+    }
+    return safe;
   };
 
   const rows = posts.map((post) =>
