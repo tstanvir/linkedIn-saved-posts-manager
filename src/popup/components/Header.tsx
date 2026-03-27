@@ -1,4 +1,4 @@
-import { RefreshCw, Loader2, LayoutDashboard } from "lucide-react";
+import { RefreshCw, Loader2, LayoutDashboard, Info } from "lucide-react";
 import ThemeSwitcher from "../../shared/components/ThemeSwitcher";
 
 type ScrapeStatus = "idle" | "scraping" | "done" | "error";
@@ -33,7 +33,8 @@ export default function Header({
   const scraping = status === "scraping";
 
   return (
-    <div className="flex items-center justify-between pl-3 pr-4 py-2.5 border-b border-mt-border bg-mt-bg-card shadow-sm shrink-0 z-10 relative">
+    <div className="border-b border-mt-border bg-mt-bg-card shadow-sm shrink-0 z-10 relative">
+      <div className="flex items-center justify-between pl-3 pr-4 py-2.5">
       <div className="flex items-center gap-2">
         <div className="w-6 h-6 rounded bg-mt-accent flex items-center justify-center">
           <span className="text-black text-xs font-bold leading-none">in</span>
@@ -88,6 +89,13 @@ export default function Header({
           )}
           {scraping ? "Syncing" : "Sync"}
         </button>
+      </div>
+      </div>
+      <div className="bg-mt-bg-input/40 px-3 py-1 flex items-center justify-center gap-1.5">
+        <Info size={10} className="text-mt-accent/70 shrink-0" />
+        <p className="text-[10px] text-mt-text-dim leading-tight">
+          Keep your LinkedIn Saved Posts tab open during sync for best results.
+        </p>
       </div>
     </div>
   );

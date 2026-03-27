@@ -16,7 +16,7 @@ import ThemeSwitcher from "../shared/components/ThemeSwitcher";
 import { useTheme } from "../shared/hooks/useTheme";
 import {
   RefreshCw, Loader2, Trash2, LayoutDashboard,
-  ArrowUpDown, CheckSquare, Square,
+  ArrowUpDown, CheckSquare, Square, Info,
 } from "lucide-react";
 
 type SortField = "postedAt" | "author";
@@ -241,6 +241,12 @@ export default function DashboardApp() {
             </button>
           </div>
         </div>
+        <div className="bg-mt-bg-input/40 px-6 py-1 flex items-center justify-center gap-1.5">
+          <Info size={11} className="text-mt-accent/70 shrink-0" />
+          <p className="text-[11px] text-mt-text-dim leading-tight">
+            Keep your LinkedIn Saved Posts tab open during sync for best results.
+          </p>
+        </div>
       </header>
 
       {/* ─── Toolbar ───────────────────────────────────────────────────────── */}
@@ -320,6 +326,11 @@ export default function DashboardApp() {
           </>
         )}
       </main>
+
+      {/* ─── Footer ────────────────────────────────────────────────────────── */}
+      <footer className="py-3 text-center">
+        <p className="text-[11px] text-mt-text-dim">© Md Tanvir Hussain</p>
+      </footer>
     </div>
   );
 }
