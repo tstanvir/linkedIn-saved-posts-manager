@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "LinkedIn Saved Posts Manager",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Browse, search, and filter your LinkedIn saved posts by hashtag.",
   "permissions": ["storage", "activeTab", "alarms"],
   "host_permissions": ["https://www.linkedin.com/*"],
