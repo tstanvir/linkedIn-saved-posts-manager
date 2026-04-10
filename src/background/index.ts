@@ -7,9 +7,8 @@ import { FirstSentenceSummaryEngine } from "../shared/engines/FirstSentenceSumma
 import { migrateToIndexedDB } from "../shared/store/migration";
 
 // Maximum time (ms) to wait for the content script to finish scraping.
-// At ~1 500 ms per scroll tick × 50 ticks for ~1 000 posts this is tight;
-// users with very large collections will see a friendly timeout error.
-const SCRAPE_TIMEOUT_MS = 90_000;
+// 5 minutes covers ~1 200+ posts: ~50 scroll ticks × 1 000 ms + enrichment overhead.
+const SCRAPE_TIMEOUT_MS = 300_000;
 
 // ─── Migration ────────────────────────────────────────────────────────────────
 // Run on install/update so existing users' posts move from chrome.storage.local
@@ -19,6 +18,24 @@ chrome.runtime.onInstalled.addListener(async () => {
 });
 // Safety net: also run on every service worker startup (idempotent, cheap flag check)
 migrateToIndexedDB().catch((e) => console.error("[LSPM] migration error:", e));
+
+// ─── Service worker keepalive ─────────────────────────────────────────────────
+// MV3 service workers can be terminated by Chrome during long idle periods.
+// We create a repeating alarm before a long scrape and clear it when done.
+const KEEPALIVE_ALARM = "lspm_keepalive";
+chrome.alarms.onAlarm.addListener((alarm) => {
+  if (alarm.name === KEEPALIVE_ALARM) {
+    // No-op — firing the alarm is enough to keep the service worker alive.
+  }
+});
+
+function startKeepalive(): void {
+  chrome.alarms.create(KEEPALIVE_ALARM, { periodInMinutes: 0.4 }); // every ~24 s
+}
+
+function stopKeepalive(): void {
+  chrome.alarms.clear(KEEPALIVE_ALARM);
+}
 
 // ─── Message routing ──────────────────────────────────────────────────────────
 chrome.runtime.onMessage.addListener((msg: MessageType, _sender, sendResponse) => {
@@ -41,6 +58,7 @@ async function handleTriggerScrape(
   sendResponse: (msg: MessageType) => void
 ): Promise<void> {
   broadcastStatus("scraping");
+  startKeepalive();
 
   try {
     const tabs = await chrome.tabs.query({
@@ -89,13 +107,16 @@ async function handleTriggerScrape(
       await postStore.upsertMany(mergedPosts);
       await saveSettings({ lastScraped: new Date().toISOString() });
 
+      stopKeepalive();
       broadcastStatus("done");
       sendResponse({ type: "SCRAPE_RESULT", posts: mergedPosts });
     } else if (response.type === "SCRAPE_ERROR") {
+      stopKeepalive();
       broadcastStatus("error", response.error);
       sendResponse({ type: "SCRAPE_ERROR", error: response.error });
     }
   } catch (err) {
+    stopKeepalive();
     const message = err instanceof Error ? err.message : String(err);
     broadcastStatus("error", message);
     sendResponse({ type: "SCRAPE_ERROR", error: message });

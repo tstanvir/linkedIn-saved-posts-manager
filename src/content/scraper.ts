@@ -35,7 +35,7 @@ async function scrollToBottom(): Promise<void> {
   return new Promise((resolve) => {
     let lastHeight = 0;
     let stableCount = 0;
-    const MAX_STABLE = 5;
+    const MAX_STABLE = 3;
 
     const tick = () => {
       window.scrollTo(0, document.body.scrollHeight);
@@ -50,7 +50,7 @@ async function scrollToBottom(): Promise<void> {
         stableCount = 0;
         lastHeight = currentHeight;
       }
-      setTimeout(tick, 1500);
+      setTimeout(tick, 1000);
     };
 
     tick();
